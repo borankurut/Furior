@@ -15,7 +15,8 @@ public class PlayerController : MonoBehaviour
 		Two,
 		Three
 	}
-	//todo: seperate attack1 and attakc2 from attack3 and make attack3 a different key but executable only when last attack is 2.
+	//todo: seperate attack1 and attakc2 from attack3 and make attack3 a different key but executable only 
+	//when last attack is 2 (executable for 2 seconds when last attack is 2, then require last attack is 2 again)..
 
     AnimationController animationController;
     Rigidbody2D rb;
