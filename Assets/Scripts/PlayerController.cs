@@ -20,6 +20,7 @@ public class PlayerController : MonoBehaviour
     AnimationController animationController;
     Rigidbody2D rb;
     Vector2 moveInput;
+	ParticleSystem particle;
 
     public bool IsMoving { get; private set; }
     public bool IsRising { get; private set; }
@@ -50,6 +51,7 @@ public class PlayerController : MonoBehaviour
     private void Awake()
     {
         animationController = GetComponent<AnimationController>();
+		particle = GetComponentInChildren<ParticleSystem>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -84,6 +86,14 @@ public class PlayerController : MonoBehaviour
         AttackState = (int)currentAttack;
     }
 
+	private void ComboSpecialReady(){
+		particle.Play();
+	}
+
+	private void ComboSpecialNotReady(){
+		particle.Stop();
+	}
+
     public void OnMove(InputAction.CallbackContext cb)
     {
         moveInput = cb.ReadValue<Vector2>();
@@ -105,6 +115,12 @@ public class PlayerController : MonoBehaviour
         }
 
         resetLastAttackCoroutine = StartCoroutine(ResetLastAttackAfterDelay(1.0f));
+
+
+		//paint red.
+		if(currentAttack == Attack.Three){
+			ComboSpecialNotReady();
+		}
     }
 
     public void OnAttack(InputAction.CallbackContext cb)
@@ -129,6 +145,8 @@ public class PlayerController : MonoBehaviour
     {
         yield return new WaitForSeconds(delay);
         lastAttack = Attack.Null;
+
+		ComboSpecialNotReady();
     }
 
     public void AttackComplete()
@@ -144,6 +162,10 @@ public class PlayerController : MonoBehaviour
 				Invoke("OnAttackHandler", 0.1f); //I have no idea but this fixed some bugs.
 
         }
+
+		if(lastAttack == Attack.Two){
+			ComboSpecialReady();
+		}		
 
     }
 
