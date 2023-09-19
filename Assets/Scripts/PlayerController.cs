@@ -8,6 +8,14 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
+	private enum Attack
+	{
+		Null,
+		One,
+		Two,
+		Three
+	}
+	//todo: seperate attack1 and attakc2 from attack3 and make attack3 a different key but executable only when last attack is 2.
 
     AnimationController animationController;
     Rigidbody2D rb;
@@ -17,21 +25,20 @@ public class PlayerController : MonoBehaviour
     public bool IsRising { get; private set; }
     public bool IsFalling { get; private set; }
 
-    public int AttackState { get; private set; }
+    public int AttackState { get; private set; } // 1 first, 2 second, 3 combo special, null not attacking.
 
     public bool IsHurt { get; private set; }
 
     [SerializeField] private float speed = 5.0f;
 
-    private Coroutine resetLastAttackCoroutine;
+	private Attack lastAttack = Attack.Null;
+	private Attack currentAttack = Attack.Null;
+	private bool isAttacking = false;
+	private bool attackInBuffer = false;
+	private bool canMove = true;
 
-    private enum Attack
-    {
-        Null,
-        One,
-        Two,
-        Three
-    }
+
+    private Coroutine resetLastAttackCoroutine;
 
     private Attack NextAttack(Attack attack)
     {
@@ -40,12 +47,6 @@ public class PlayerController : MonoBehaviour
         else
             return (Attack)((int)attack + 1);
     }
-
-    private Attack lastAttack = Attack.Null;
-    private Attack currentAttack = Attack.Null;
-    private bool isAttacking = false;
-    private bool attackInBuffer = false;
-
     private void Awake()
     {
         animationController = GetComponent<AnimationController>();
@@ -63,10 +64,16 @@ public class PlayerController : MonoBehaviour
     }
     private void FixedUpdate()
     {
-		if(!isAttacking){// don't use this here, add some animation events to let player move in certain frames off attack like firts two to make the movement smoother.
+		if(canMove){// don't use this here, add some animation events to let player move in certain frames off attack like firts two to make the movement smoother.
 			rb.velocity = new Vector2(moveInput.x * speed, rb.velocity.y);
 			FixDirection();
 		}
+		else 
+			rb.velocity /= 1.5f;
+
+		if(currentAttack == Attack.Three)
+			rb.velocity = Vector2.zero;
+
 
         Debug.Log("current: " + currentAttack);
         Debug.Log("lastattack: " + lastAttack);
@@ -85,7 +92,7 @@ public class PlayerController : MonoBehaviour
 
     private void OnAttackHandler()
     {
-        if (isAttacking == true)
+        if (isAttacking == true && currentAttack != Attack.Three)
             attackInBuffer = true;
 
         isAttacking = true;
@@ -97,7 +104,7 @@ public class PlayerController : MonoBehaviour
             StopCoroutine(resetLastAttackCoroutine);
         }
 
-        resetLastAttackCoroutine = StartCoroutine(ResetLastAttackAfterDelay(0.7f));
+        resetLastAttackCoroutine = StartCoroutine(ResetLastAttackAfterDelay(1.0f));
     }
 
     public void OnAttack(InputAction.CallbackContext cb)
@@ -139,5 +146,14 @@ public class PlayerController : MonoBehaviour
         }
 
     }
+
+
+	public void setCanMoveTrue(){
+		canMove = true;
+	}
+
+	public void setCanMoveFalse(){
+		canMove = false;
+	}
 }
 
