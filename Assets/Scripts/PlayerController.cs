@@ -8,20 +8,20 @@ using UnityEngine.InputSystem;
 
 public class PlayerController : MonoBehaviour
 {
-	private enum Attack
-	{
-		Null,
-		One,
-		Two,
-		Three
-	}
-	//todo: seperate attack1 and attakc2 from attack3 and make attack3 a different key but executable only 
-	//when last attack is 2 (executable for 2 seconds when last attack is 2, then require last attack is 2 again)..
+    private enum Attack
+    {
+        Null,
+        One,
+        Two,
+        Three
+    }
+    //todo: seperate attack1 and attakc2 from attack3 and make attack3 a different key but executable only 
+    //when last attack is 2 (executable for 2 seconds when last attack is 2, then require last attack is 2 again)..
 
     AnimationController animationController;
     Rigidbody2D rb;
     Vector2 moveInput;
-	ParticleSystem particle;
+    ParticleSystem particle;
 
     public bool IsMoving { get; private set; }
     public bool IsRising { get; private set; }
@@ -33,76 +33,69 @@ public class PlayerController : MonoBehaviour
 
     [SerializeField] private float speed = 5.0f;
 
-	private Attack lastAttack = Attack.Null;
-	private Attack currentAttack = Attack.Null;
-	private bool isAttacking = false;
-	private bool attackInBuffer = false;
-	private bool canMove = true;
+    private Attack lastAttack = Attack.Null;
+    private Attack currentAttack = Attack.Null;
+
+    private bool isAttacking = false;
+    private bool attackInBuffer = false;
+    private bool canMove = true;
 
 
     private Coroutine resetLastAttackCoroutine;
 
-    private Attack NextAttack(Attack attack)
-    {
+    private Attack NextAttack(Attack attack){
         if (attack == Attack.Three)
             return Attack.One;
         else
             return (Attack)((int)attack + 1);
     }
-    private void Awake()
-    {
+    private void Awake(){
         animationController = GetComponent<AnimationController>();
-		particle = GetComponentInChildren<ParticleSystem>();
+        particle = GetComponentInChildren<ParticleSystem>();
         rb = GetComponent<Rigidbody2D>();
     }
 
-    private void FixDirection()
-    {
+    private void FixDirection(){
         if ((moveInput.x > 0 && transform.localScale.x < 0) ||
-                (moveInput.x < 0 && transform.localScale.x > 0))
-        {
+                (moveInput.x < 0 && transform.localScale.x > 0)){
             transform.localScale = new Vector2(-transform.localScale.x, transform.localScale.y);
         }
 
     }
-    private void FixedUpdate()
-    {
-		if(canMove){// don't use this here, add some animation events to let player move in certain frames off attack like firts two to make the movement smoother.
-			rb.velocity = new Vector2(moveInput.x * speed, rb.velocity.y);
-			FixDirection();
-		}
-		else 
-			rb.velocity /= 1.5f;
+    private void FixedUpdate(){
+        if (canMove){// don't use this here, add some animation events to let player move in certain frames off attack like firts two to make the movement smoother.
+            rb.velocity = new Vector2(moveInput.x * speed, rb.velocity.y);
+            FixDirection();
+        }
+        else
+            rb.velocity /= 1.5f;
 
-		if(currentAttack == Attack.Three)
-			rb.velocity = Vector2.zero;
+        if (currentAttack == Attack.Three)
+            rb.velocity = Vector2.zero;
 
 
         Debug.Log("current: " + currentAttack);
         Debug.Log("lastattack: " + lastAttack);
     }
 
-    private void Update()
-    {
+    private void Update(){
         AttackState = (int)currentAttack;
     }
 
-	private void ComboSpecialReady(){
-		particle.Play();
-	}
+    private void ComboSpecialReady(){
+        particle.Play();
+    }
 
-	private void ComboSpecialNotReady(){
-		particle.Stop();
-	}
+    private void ComboSpecialNotReady(){
+        particle.Stop();
+    }
 
-    public void OnMove(InputAction.CallbackContext cb)
-    {
+    public void OnMove(InputAction.CallbackContext cb){
         moveInput = cb.ReadValue<Vector2>();
         IsMoving = moveInput.x != 0;
     }
 
-    private void OnAttackHandler()
-    {
+    private void OnAttackHandler(){
         if (isAttacking == true && currentAttack != Attack.Three)
             attackInBuffer = true;
 
@@ -110,30 +103,27 @@ public class PlayerController : MonoBehaviour
 
         currentAttack = NextAttack(lastAttack);
 
-        if (resetLastAttackCoroutine != null)
-        {
+        if (resetLastAttackCoroutine != null){
             StopCoroutine(resetLastAttackCoroutine);
         }
 
         resetLastAttackCoroutine = StartCoroutine(ResetLastAttackAfterDelay(1.0f));
 
 
-		//paint red.
-		if(currentAttack == Attack.Three){
-			ComboSpecialNotReady();
-		}
+        //paint red.
+        if (currentAttack == Attack.Three){
+            ComboSpecialNotReady();
+        }
     }
 
-    public void OnAttack(InputAction.CallbackContext cb)
-    {
-        if (cb.started)
-        {
+    public void OnAttack(InputAction.CallbackContext cb){
+        if (cb.started){
             // Debug.Log("befre:");
             // Debug.Log("AttackState: " + AttackState);
             // Debug.Log("currentAttack: " + currentAttack);
             // Debug.Log("nextAttack: " + nextAttack);
 
-			OnAttackHandler();
+            OnAttackHandler();
 
             // Debug.Log("after:");
             // Debug.Log("AttackState: " + AttackState);
@@ -142,41 +132,46 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-    private IEnumerator ResetLastAttackAfterDelay(float delay)
-    {
-        yield return new WaitForSeconds(delay);
-        lastAttack = Attack.Null;
-
-		ComboSpecialNotReady();
+    public void OnResetAttack(InputAction.CallbackContext cb){
+        if (cb.started){
+            if (lastAttack == Attack.Two) //allow reset attack for special 3th attack only
+                ResetAttack();
+        }
     }
 
-    public void AttackComplete()
-    {
+    private IEnumerator ResetLastAttackAfterDelay(float delay){
+        yield return new WaitForSeconds(delay);
+        ResetAttack();
+    }
+
+    private void ResetAttack(){
+        lastAttack = Attack.Null;
+        ComboSpecialNotReady();
+    }
+
+    public void AttackComplete(){
         isAttacking = false;
         lastAttack = currentAttack;
         currentAttack = Attack.Null;
 
-        if (attackInBuffer)
-        {
+        if (attackInBuffer){
             attackInBuffer = false;
-			if(!IsInvoking("OnAttackHandler"))
-				Invoke("OnAttackHandler", 0.1f); //I have no idea but this fixed some bugs.
+            if (!IsInvoking("OnAttackHandler"))
+                Invoke("OnAttackHandler", 0.1f); //I have no idea but this fixed some bugs.
 
         }
 
-		if(lastAttack == Attack.Two){
-			ComboSpecialReady();
-		}		
-
+        if (lastAttack == Attack.Two){
+            ComboSpecialReady();
+        }
     }
 
+    public void setCanMoveTrue(){
+        canMove = true;
+    }
 
-	public void setCanMoveTrue(){
-		canMove = true;
-	}
-
-	public void setCanMoveFalse(){
-		canMove = false;
-	}
+    public void setCanMoveFalse(){
+        canMove = false;
+    }
 }
 

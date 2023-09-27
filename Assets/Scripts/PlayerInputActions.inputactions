@@ -33,9 +33,9 @@
                     "initialStateCheck": false
                 },
                 {
-                    "name": "Combo Special Attack",
+                    "name": "ResetAttack",
                     "type": "Button",
-                    "id": "33e18370-fc4c-41ca-b705-3668582a8969",
+                    "id": "21ecce69-8095-41c7-89ba-3c509d7666fb",
                     "expectedControlType": "Button",
                     "processors": "",
                     "interactions": "",
@@ -265,12 +265,12 @@
                 },
                 {
                     "name": "",
-                    "id": "28a6144c-a0f0-4901-b10c-dff85a85dac2",
+                    "id": "9b03fcaa-9cbb-4a9d-b192-25b164220d98",
                     "path": "<Mouse>/rightButton",
                     "interactions": "",
                     "processors": "",
                     "groups": "Keyboard&Mouse",
-                    "action": "Combo Special Attack",
+                    "action": "ResetAttack",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
