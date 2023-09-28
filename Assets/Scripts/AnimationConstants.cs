@@ -19,7 +19,7 @@ namespace ConstantsFurior
         public const string JUMP = "jump_full";
         public const string ROLL = "roll";
         public const string RUN = "run";
-        public const string SPIN_ATTACK = "sp_atk";
+        public const string SPECIAL_ATTACK = "sp_atk";
         public const string HURT = "take_hit";
 
     }

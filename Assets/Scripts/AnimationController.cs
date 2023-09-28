@@ -20,6 +20,9 @@ public class AnimationController : MonoBehaviour
             ChangeState(AnimationConstants.HURT);
         }        
 
+		if(playerController.IsSpecialAttacking)
+			ChangeState(AnimationConstants.SPECIAL_ATTACK);
+
         else if(playerController.AttackState != 0){
 			int state = playerController.AttackState;
 

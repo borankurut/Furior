@@ -618,12 +618,20 @@ PrefabInstance:
       value: 15
       objectReference: {fileID: 0}
     - target: {fileID: 1299498980956979119, guid: ebdfadce40d0a4247b29fb4660f6d3bb, type: 3}
-      propertyPath: m_ActionEvents.Array.data[14].m_ActionId
+      propertyPath: m_ActionEvents.Array.data[13].m_ActionId
       value: 21ecce69-8095-41c7-89ba-3c509d7666fb
       objectReference: {fileID: 0}
     - target: {fileID: 1299498980956979119, guid: ebdfadce40d0a4247b29fb4660f6d3bb, type: 3}
-      propertyPath: m_ActionEvents.Array.data[14].m_ActionName
+      propertyPath: m_ActionEvents.Array.data[14].m_ActionId
+      value: c9919f6b-c478-446b-97b9-e83b17eb8ed3
+      objectReference: {fileID: 0}
+    - target: {fileID: 1299498980956979119, guid: ebdfadce40d0a4247b29fb4660f6d3bb, type: 3}
+      propertyPath: m_ActionEvents.Array.data[13].m_ActionName
       value: Player/ResetAttack[/Mouse/rightButton]
+      objectReference: {fileID: 0}
+    - target: {fileID: 1299498980956979119, guid: ebdfadce40d0a4247b29fb4660f6d3bb, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_ActionName
+      value: Player/SpecialAttack[/Keyboard/r]
       objectReference: {fileID: 0}
     - target: {fileID: 1299498980956979119, guid: ebdfadce40d0a4247b29fb4660f6d3bb, type: 3}
       propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.size
@@ -642,8 +650,12 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 1299498980956979119, guid: ebdfadce40d0a4247b29fb4660f6d3bb, type: 3}
-      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      propertyPath: m_ActionEvents.Array.data[13].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
       value: OnResetAttack
+      objectReference: {fileID: 0}
+    - target: {fileID: 1299498980956979119, guid: ebdfadce40d0a4247b29fb4660f6d3bb, type: 3}
+      propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_MethodName
+      value: OnSpecialAttack
       objectReference: {fileID: 0}
     - target: {fileID: 1299498980956979119, guid: ebdfadce40d0a4247b29fb4660f6d3bb, type: 3}
       propertyPath: m_ActionEvents.Array.data[14].m_PersistentCalls.m_Calls.Array.data[0].m_TargetAssemblyTypeName

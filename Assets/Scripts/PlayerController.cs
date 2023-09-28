@@ -21,17 +21,20 @@ public class PlayerController : MonoBehaviour
     AnimationController animationController;
     Rigidbody2D rb;
     Vector2 moveInput;
-    ParticleSystem particle;
+    ParticleSystem particleComboSpecial;
 
     public bool IsMoving { get; private set; }
     public bool IsRising { get; private set; }
     public bool IsFalling { get; private set; }
+    public bool IsSpecialAttacking { get; private set; }
 
     public int AttackState { get; private set; } // 1 first, 2 second, 3 combo special, null not attacking.
 
     public bool IsHurt { get; private set; }
 
-    [SerializeField] private float speed = 5.0f;
+    [SerializeField] private const float originalSpeed = 5.0f;
+	private float speed = originalSpeed;
+	
 
     private Attack lastAttack = Attack.Null;
     private Attack currentAttack = Attack.Null;
@@ -51,7 +54,7 @@ public class PlayerController : MonoBehaviour
     }
     private void Awake(){
         animationController = GetComponent<AnimationController>();
-        particle = GetComponentInChildren<ParticleSystem>();
+        particleComboSpecial = GetComponentInChildren<ParticleSystem>();
         rb = GetComponent<Rigidbody2D>();
     }
 
@@ -83,11 +86,11 @@ public class PlayerController : MonoBehaviour
     }
 
     private void ComboSpecialReady(){
-        particle.Play();
+        particleComboSpecial.Play();
     }
 
     private void ComboSpecialNotReady(){
-        particle.Stop();
+        particleComboSpecial.Stop();
     }
 
     public void OnMove(InputAction.CallbackContext cb){
@@ -132,6 +135,16 @@ public class PlayerController : MonoBehaviour
         }
     }
 
+	private void OnSpecialAttackHandler(){
+		IsSpecialAttacking = true;
+		speed = speed / 2;
+	}
+
+	public void OnSpecialAttack(InputAction.CallbackContext cb){
+		if(cb.started)
+			OnSpecialAttackHandler();
+	}
+
     public void OnResetAttack(InputAction.CallbackContext cb){
         if (cb.started){
             if (lastAttack == Attack.Two) //allow reset attack for special 3th attack only
@@ -165,6 +178,11 @@ public class PlayerController : MonoBehaviour
             ComboSpecialReady();
         }
     }
+
+	public void SpecialAttackComplete(){
+		IsSpecialAttacking = false;
+		speed = originalSpeed;
+	}
 
     public void setCanMoveTrue(){
         canMove = true;
