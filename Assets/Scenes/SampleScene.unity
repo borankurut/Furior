@@ -472,7 +472,7 @@ GameObject:
   - component: {fileID: 630500421}
   - component: {fileID: 630500420}
   m_Layer: 0
-  m_Name: AttackReadyIndicator (1)
+  m_Name: SpecialAttackReadyIndicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
