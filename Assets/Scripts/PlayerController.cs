@@ -15,13 +15,12 @@ public class PlayerController : MonoBehaviour
         Two,
         Three
     }
-    //todo: seperate attack1 and attakc2 from attack3 and make attack3 a different key but executable only 
-    //when last attack is 2 (executable for 2 seconds when last attack is 2, then require last attack is 2 again)..
 
     AnimationController animationController;
     Rigidbody2D rb;
     Vector2 moveInput;
-    ParticleSystem particleComboSpecial;
+    ParticleSystem particleComboSpecialIndicator;
+    ParticleSystem particleSpecialAttackIndicator;
 
     public bool IsMoving { get; private set; }
     public bool IsRising { get; private set; }
@@ -33,8 +32,11 @@ public class PlayerController : MonoBehaviour
     public bool IsHurt { get; private set; }
 
     [SerializeField] private const float originalSpeed = 5.0f;
-	private float speed = originalSpeed;
-	
+    [SerializeField] private const float specialAttackSpeedReduce = 0.5f;
+    [SerializeField] private const float specialAttackDelay = 10.0f;
+
+    private float speed = originalSpeed;
+
 
     private Attack lastAttack = Attack.Null;
     private Attack currentAttack = Attack.Null;
@@ -42,9 +44,11 @@ public class PlayerController : MonoBehaviour
     private bool isAttacking = false;
     private bool attackInBuffer = false;
     private bool canMove = true;
+    private bool canSpecialAttack = false;
 
 
     private Coroutine resetLastAttackCoroutine;
+    private Coroutine resetCanSpecialAttackCoroutine;
 
     private Attack NextAttack(Attack attack){
         if (attack == Attack.Three)
@@ -54,8 +58,14 @@ public class PlayerController : MonoBehaviour
     }
     private void Awake(){
         animationController = GetComponent<AnimationController>();
-        particleComboSpecial = GetComponentInChildren<ParticleSystem>();
+        particleComboSpecialIndicator = GameObject.Find("AttackReadyIndicator").GetComponent<ParticleSystem>();
+        particleSpecialAttackIndicator = GameObject.Find("SpecialAttackReadyIndicator").GetComponent<ParticleSystem>();
+
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    private void Start(){
+        resetCanSpecialAttackCoroutine = StartCoroutine(ResetCanSpecialAttackAfterDelay(specialAttackDelay));
     }
 
     private void FixDirection(){
@@ -66,7 +76,7 @@ public class PlayerController : MonoBehaviour
 
     }
     private void FixedUpdate(){
-        if (canMove){// don't use this here, add some animation events to let player move in certain frames off attack like firts two to make the movement smoother.
+        if (canMove){
             rb.velocity = new Vector2(moveInput.x * speed, rb.velocity.y);
             FixDirection();
         }
@@ -86,11 +96,19 @@ public class PlayerController : MonoBehaviour
     }
 
     private void ComboSpecialReady(){
-        particleComboSpecial.Play();
+        particleComboSpecialIndicator.Play();
     }
 
     private void ComboSpecialNotReady(){
-        particleComboSpecial.Stop();
+        particleComboSpecialIndicator.Stop();
+    }
+
+    private void SpecialAttackReady(){
+        particleSpecialAttackIndicator.Play();
+    }
+
+    private void SpecialAttackNotReady(){
+        particleSpecialAttackIndicator.Stop();
     }
 
     public void OnMove(InputAction.CallbackContext cb){
@@ -112,8 +130,6 @@ public class PlayerController : MonoBehaviour
 
         resetLastAttackCoroutine = StartCoroutine(ResetLastAttackAfterDelay(1.0f));
 
-
-        //paint red.
         if (currentAttack == Attack.Three){
             ComboSpecialNotReady();
         }
@@ -135,15 +151,21 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-	private void OnSpecialAttackHandler(){
-		IsSpecialAttacking = true;
-		speed = speed / 2;
-	}
+    private void OnSpecialAttackHandler(){
+        if (!canSpecialAttack)
+            return;
 
-	public void OnSpecialAttack(InputAction.CallbackContext cb){
-		if(cb.started)
-			OnSpecialAttackHandler();
-	}
+        IsSpecialAttacking = true;
+        speed = speed * specialAttackSpeedReduce;
+
+        canSpecialAttack = false;
+        SpecialAttackNotReady();
+    }
+
+    public void OnSpecialAttack(InputAction.CallbackContext cb){
+        if (cb.started)
+            OnSpecialAttackHandler();
+    }
 
     public void OnResetAttack(InputAction.CallbackContext cb){
         if (cb.started){
@@ -155,6 +177,12 @@ public class PlayerController : MonoBehaviour
     private IEnumerator ResetLastAttackAfterDelay(float delay){
         yield return new WaitForSeconds(delay);
         ResetAttack();
+    }
+
+    private IEnumerator ResetCanSpecialAttackAfterDelay(float delay){
+        yield return new WaitForSeconds(delay);
+        canSpecialAttack = true;
+        SpecialAttackReady();
     }
 
     private void ResetAttack(){
@@ -179,10 +207,12 @@ public class PlayerController : MonoBehaviour
         }
     }
 
-	public void SpecialAttackComplete(){
-		IsSpecialAttacking = false;
-		speed = originalSpeed;
-	}
+    public void SpecialAttackComplete(){
+        IsSpecialAttacking = false;
+        speed = originalSpeed;
+
+        resetCanSpecialAttackCoroutine = StartCoroutine(ResetCanSpecialAttackAfterDelay(specialAttackDelay));
+    }
 
     public void setCanMoveTrue(){
         canMove = true;
