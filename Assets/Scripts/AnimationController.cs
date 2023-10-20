@@ -7,11 +7,13 @@ public class AnimationController : MonoBehaviour
 {
     Animator animator;
     PlayerController playerController;
+	PlayerAttackController attackController;
     private string currentState;
 
     private void Start() {
         animator = GetComponent<Animator>();
         playerController = GetComponent<PlayerController>();
+        attackController = GetComponent<PlayerAttackController>();
     }
 
 
@@ -20,11 +22,11 @@ public class AnimationController : MonoBehaviour
             ChangeState(AnimationConstants.HURT);
         }        
 
-		if(playerController.IsSpecialAttacking)
+		if(attackController.IsSpecialAttacking)
 			ChangeState(AnimationConstants.SPECIAL_ATTACK);
 
-        else if(playerController.AttackState != 0){
-			int state = playerController.AttackState;
+        else if(attackController.AttackState != 0){
+			int state = attackController.AttackState;
 
 			if(state == 1){
 				ChangeState(AnimationConstants.ATTACK_1);
