@@ -5,6 +5,7 @@ using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(AnimationController))]
+[RequireComponent(typeof(PlayerAttackController))]
 
 public class PlayerController : MonoBehaviour
 {

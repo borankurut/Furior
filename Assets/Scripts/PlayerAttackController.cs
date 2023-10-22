@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+[RequireComponent(typeof(Rigidbody2D))]
+[RequireComponent(typeof(AnimationController))]
+[RequireComponent(typeof(PlayerController))]
+
 public class PlayerAttackController : MonoBehaviour
 {
     public enum Attack
@@ -175,5 +179,4 @@ public class PlayerAttackController : MonoBehaviour
 
         resetCanSpecialAttackCoroutine = StartCoroutine(ResetCanSpecialAttackAfterDelay(SPECIAL_ATTACK_DELAY));
     }
-
 }

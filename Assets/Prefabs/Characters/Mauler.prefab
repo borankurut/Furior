@@ -4844,6 +4844,7 @@ GameObject:
   - component: {fileID: 3330331813400888771}
   - component: {fileID: 5096315514499993310}
   - component: {fileID: 1299498980956979119}
+  - component: {fileID: 3604801770370202909}
   m_Layer: 6
   m_Name: Mauler
   m_TagString: Untagged
@@ -5074,8 +5075,8 @@ MonoBehaviour:
     m_ActionName: Player/Look[/Mouse/delta]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3330331813400888771}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 3604801770370202909}
+        m_TargetAssemblyTypeName: PlayerAttackController, Assembly-CSharp
         m_MethodName: OnAttack
         m_Mode: 0
         m_Arguments:
@@ -5130,8 +5131,8 @@ MonoBehaviour:
     m_ActionName: UI/TrackedDeviceOrientation
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3330331813400888771}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 3604801770370202909}
+        m_TargetAssemblyTypeName: PlayerAttackController, Assembly-CSharp
         m_MethodName: OnResetAttack
         m_Mode: 0
         m_Arguments:
@@ -5146,8 +5147,8 @@ MonoBehaviour:
     m_ActionName: Player/ResetAttack[/Mouse/rightButton]
   - m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 3330331813400888771}
-        m_TargetAssemblyTypeName: PlayerController, Assembly-CSharp
+      - m_Target: {fileID: 3604801770370202909}
+        m_TargetAssemblyTypeName: PlayerAttackController, Assembly-CSharp
         m_MethodName: OnSpecialAttack
         m_Mode: 0
         m_Arguments:
@@ -5165,6 +5166,18 @@ MonoBehaviour:
   m_DefaultActionMap: Player
   m_SplitScreenIndex: -1
   m_Camera: {fileID: 0}
+--- !u!114 &3604801770370202909
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4845549768129979160}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0cf8a1934f420084ab4fbf0e29896e5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &9108776296274975934
 GameObject:
   m_ObjectHideFlags: 0
