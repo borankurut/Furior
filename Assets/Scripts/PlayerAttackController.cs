@@ -14,7 +14,8 @@ public class PlayerAttackController : MonoBehaviour
         Null,
         One,
         Two,
-        Three
+        Three,
+		Canceled
     }
 
     AnimationController animationController;
@@ -27,6 +28,7 @@ public class PlayerAttackController : MonoBehaviour
     public int AttackState { get; private set; } // 1 first, 2 second, 3 combo special, null not attacking.
 
     [SerializeField] private const float SPECIAL_ATTACK_SPEED_REDUCE = 0.5f;
+    [SerializeField] private const float ATTACK_SPEED_REDUCE = 0.75f;
     [SerializeField] private const float SPECIAL_ATTACK_DELAY = 10.0f;
 
     private Attack lastAttack = Attack.Null;
@@ -82,25 +84,6 @@ public class PlayerAttackController : MonoBehaviour
         particleSpecialAttackIndicator.Stop();
     }
 
-    private void OnAttackHandler(){
-        if (isAttacking == true && currentAttack != Attack.Three)
-            attackInBuffer = true;
-
-        isAttacking = true;
-
-        currentAttack = NextAttack(lastAttack);
-
-        if (resetLastAttackCoroutine != null){
-            StopCoroutine(resetLastAttackCoroutine);
-        }
-
-        resetLastAttackCoroutine = StartCoroutine(ResetLastAttackAfterDelay(1.0f));
-
-        if (currentAttack == Attack.Three){
-            ComboSpecialNotReady();
-        }
-    }
-
     public void OnAttack(InputAction.CallbackContext cb){
         if (cb.started){
             // Debug.Log("befre:");
@@ -117,6 +100,44 @@ public class PlayerAttackController : MonoBehaviour
         }
     }
 
+    public void OnSpecialAttack(InputAction.CallbackContext cb){
+        if (cb.started)
+            OnSpecialAttackHandler();
+    }
+
+    public void OnCancelCombo(InputAction.CallbackContext cb){
+        if (cb.started){
+            CancelComboHandler();
+		}
+    }
+
+
+	// HANDLERS
+    private void OnAttackHandler(){
+        if (isAttacking == true && currentAttack != Attack.Three)
+            attackInBuffer = true;
+
+        isAttacking = true;
+
+		playerController.multiplySpeed(ATTACK_SPEED_REDUCE); 
+
+		if(lastAttack == Attack.Canceled)
+			currentAttack = Attack.One;
+
+		else
+	        currentAttack = NextAttack(lastAttack);
+
+        if (resetLastAttackCoroutine != null){
+            StopCoroutine(resetLastAttackCoroutine);
+        }
+
+        resetLastAttackCoroutine = StartCoroutine(ResetLastAttackAfterDelay(1.0f));
+
+        if (currentAttack == Attack.Three){
+            ComboSpecialNotReady();
+        }
+    }
+
     private void OnSpecialAttackHandler(){
         if (!canSpecialAttack)
             return;
@@ -128,16 +149,12 @@ public class PlayerAttackController : MonoBehaviour
         SpecialAttackNotReady();
     }
 
-    public void OnSpecialAttack(InputAction.CallbackContext cb){
-        if (cb.started)
-            OnSpecialAttackHandler();
-    }
-
-    public void OnResetAttack(InputAction.CallbackContext cb){
-        if (cb.started){
-            if (lastAttack == Attack.Two) //allow reset attack for special 3th attack only
-                ResetAttack();
-        }
+    private void CancelComboHandler(){
+			//allow reset attack for special 3th attack only
+            if (lastAttack == Attack.Two || currentAttack == Attack.Two){
+				ResetAttack();
+		        lastAttack = Attack.Canceled;
+			}
     }
 
     private IEnumerator ResetLastAttackAfterDelay(float delay){
@@ -152,19 +169,23 @@ public class PlayerAttackController : MonoBehaviour
     }
 
     private void ResetAttack(){
-        lastAttack = Attack.Null;
+		attackInBuffer = false;
         ComboSpecialNotReady();
     }
 
     public void AttackComplete(){
         isAttacking = false;
-        lastAttack = currentAttack;
+		playerController.resetSpeed();
+
+		if(!(lastAttack == Attack.Canceled && currentAttack == Attack.Two))
+	        lastAttack = currentAttack;
+
         currentAttack = Attack.Null;
 
         if (attackInBuffer){
             attackInBuffer = false;
             if (!IsInvoking("OnAttackHandler"))
-                Invoke("OnAttackHandler", 0.1f); //I have no idea but this fixed some bugs.
+                Invoke("OnAttackHandler", 0.001f); //I have no idea but this fixed some bugs.
 
         }
 

@@ -663,7 +663,7 @@ ParticleSystem:
         m_RotationOrder: 4
   ShapeModule:
     serializedVersion: 6
-    enabled: 1
+    enabled: 0
     type: 6
     angle: 25
     length: 5
@@ -1138,7 +1138,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   RotationModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -2133,7 +2133,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   LifetimeByEmitterSpeedModule:
-    enabled: 1
+    enabled: 0
     m_Curve:
       serializedVersion: 2
       minMaxState: 1
@@ -4953,8 +4953,8 @@ CapsuleCollider2D:
   m_IsTrigger: 0
   m_UsedByEffector: 0
   m_UsedByComposite: 0
-  m_Offset: {x: 0.026919127, y: -1.30084}
-  m_Size: {x: 0.7934232, y: 1.4677083}
+  m_Offset: {x: 0.026919127, y: -1.2644715}
+  m_Size: {x: 0.7934232, y: 1.3949714}
   m_Direction: 0
 --- !u!95 &1070394823771165426
 Animator:
@@ -5205,8 +5205,8 @@ Transform:
   m_GameObject: {fileID: 6897736181228350632}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0.03999996, y: -0.42000008, z: 0}
-  m_LocalScale: {x: 0.02334, y: 0.02334, z: 0.02334}
+  m_LocalPosition: {x: 0.03999996, y: -1.961, z: 0}
+  m_LocalScale: {x: 0.04988925, y: 0.009124481, z: 0.02334}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 5680354622815234768}
@@ -5841,8 +5841,8 @@ ParticleSystem:
         m_RotationOrder: 4
   ShapeModule:
     serializedVersion: 6
-    enabled: 1
-    type: 6
+    enabled: 0
+    type: 18
     angle: 25
     length: 5
     boxThickness: {x: 0, y: 0, z: 0}
@@ -6316,7 +6316,7 @@ ParticleSystem:
         m_RotationOrder: 4
     separateAxes: 0
   RotationModule:
-    enabled: 1
+    enabled: 0
     x:
       serializedVersion: 2
       minMaxState: 0
@@ -7311,7 +7311,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
   LifetimeByEmitterSpeedModule:
-    enabled: 1
+    enabled: 0
     m_Curve:
       serializedVersion: 2
       minMaxState: 1
