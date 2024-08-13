@@ -20,13 +20,14 @@ public class PlayerController : MonoBehaviour
 
     public bool IsHurt { get; private set; }
 
-    [SerializeField] private const float ORIGINAL_SPEED = 5.0f;
+    [SerializeField] private float ORIGINAL_SPEED = 5.0f;
 
-    private float speed = ORIGINAL_SPEED;
+    private float speed;
 
     private bool canMove = true;
 
     private void Awake(){
+        speed = ORIGINAL_SPEED;
         animationController = GetComponent<AnimationController>();
         attackController = GetComponent<PlayerAttackController>();
 
@@ -43,13 +44,9 @@ public class PlayerController : MonoBehaviour
     private void FixedUpdate(){
         if (canMove){
             rb.velocity = new Vector2(moveInput.x * speed, rb.velocity.y);
-            FixDirection();
+            if(!attackController.isAttacking())
+                FixDirection();
         }
-        else
-            rb.velocity /= 1.5f;
-
-        if (attackController.AttackState == (int) PlayerAttackController.Attack.Three)
-            rb.velocity = Vector2.zero;
 
     }
 

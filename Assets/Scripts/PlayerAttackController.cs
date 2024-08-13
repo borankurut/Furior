@@ -6,6 +6,7 @@ using UnityEngine.InputSystem;
 [RequireComponent(typeof(Rigidbody2D))]
 [RequireComponent(typeof(AnimationController))]
 [RequireComponent(typeof(PlayerController))]
+[RequireComponent(typeof(Animator))]
 
 public class PlayerAttackController : MonoBehaviour
 {
@@ -17,7 +18,7 @@ public class PlayerAttackController : MonoBehaviour
         Three,
 		Canceled
     }
-
+    Animator animator;
     AnimationController animationController;
 	PlayerController playerController;
 
@@ -31,10 +32,11 @@ public class PlayerAttackController : MonoBehaviour
     [SerializeField] private const float ATTACK_SPEED_REDUCE = 0.75f;
     [SerializeField] private const float SPECIAL_ATTACK_DELAY = 10.0f;
 
+    private Vector2 _knockBackVector = new Vector2(0f, 0f);
     private Attack lastAttack = Attack.Null;
     private Attack currentAttack = Attack.Null;
 
-    private bool isAttacking = false;
+    private bool isNormalAttacking = false;
     private bool attackInBuffer = false;
 
     private Coroutine resetLastAttackCoroutine;
@@ -42,8 +44,13 @@ public class PlayerAttackController : MonoBehaviour
 
     private bool canSpecialAttack = false;
 
+    public bool isAttacking(){
+        return IsSpecialAttacking || isNormalAttacking;
+    }
+
     private void Awake(){
         animationController = GetComponent<AnimationController>();
+        animator = GetComponent<Animator>();
 		playerController = GetComponent<PlayerController>();
         particleComboSpecialIndicator = GameObject.Find("AttackReadyIndicator").GetComponent<ParticleSystem>();
         particleSpecialAttackIndicator = GameObject.Find("SpecialAttackReadyIndicator").GetComponent<ParticleSystem>();
@@ -56,9 +63,10 @@ public class PlayerAttackController : MonoBehaviour
     // Update is called once per frame
     private void Update(){
         AttackState = (int)currentAttack;
-
-        Debug.Log("current: " + currentAttack);
-        Debug.Log("lastattack: " + lastAttack);
+        _knockBackVector.x = animator.GetFloat("KnockBackX");
+        _knockBackVector.y = animator.GetFloat("KnockBackY");
+        // Debug.Log("current: " + currentAttack);
+        // Debug.Log("lastattack: " + lastAttack);
     }
 
     private Attack NextAttack(Attack attack){
@@ -114,10 +122,10 @@ public class PlayerAttackController : MonoBehaviour
 
 	// HANDLERS
     private void OnAttackHandler(){
-        if (isAttacking == true && currentAttack != Attack.Three)
+        if (isNormalAttacking == true && currentAttack != Attack.Three)
             attackInBuffer = true;
 
-        isAttacking = true;
+        isNormalAttacking = true;
 
 		playerController.multiplySpeed(ATTACK_SPEED_REDUCE); 
 
@@ -174,7 +182,7 @@ public class PlayerAttackController : MonoBehaviour
     }
 
     public void AttackComplete(){
-        isAttacking = false;
+        isNormalAttacking = false;
 		playerController.resetSpeed();
 
 		if(!(lastAttack == Attack.Canceled && currentAttack == Attack.Two))
@@ -199,5 +207,13 @@ public class PlayerAttackController : MonoBehaviour
 		playerController.resetSpeed();
 
         resetCanSpecialAttackCoroutine = StartCoroutine(ResetCanSpecialAttackAfterDelay(SPECIAL_ATTACK_DELAY));
+    }
+
+    public void SetKnockBackVector(Vector2 kbVec){
+        _knockBackVector = kbVec;
+    }
+
+    public Vector2 GetKnockBackVector(){
+        return _knockBackVector;
     }
 }
